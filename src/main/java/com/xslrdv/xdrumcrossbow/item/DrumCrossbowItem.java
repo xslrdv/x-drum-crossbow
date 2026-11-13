@@ -43,15 +43,15 @@ public class DrumCrossbowItem extends Item {
     public static final int EMPTY_CLICK_DELAY = 3;
     public static final int RELOAD_TICKS = 30;
 
-    public static final float ARROW_SPEED = 3.15f;
-    public static final float AIM_INACCURACY = 0.2f;
-    public static final float HIP_INACCURACY = 1.75f;
+    public static final float ARROW_SPEED = 3.75f;
+    public static final float AIM_INACCURACY = 0.15f;
+    public static final float HIP_INACCURACY = 1.25f;
     public static final float AIM_SPEED_MULTIPLIER = 0.7f;
 
     public static final double HIP_SIDE = 0.35;
     public static final double HIP_DOWN = 0.25;
     public static final double HIP_FORWARD = 0.5;
-    public static final double CONVERGE_DISTANCE = 30.0;
+    public static final double CONVERGE_DISTANCE = 20.0;
 
     private static final Map<UUID, Long> LAST_SHOT = new HashMap<>();
     private static final Map<UUID, Long> RELOAD_FINISH = new HashMap<>();
@@ -141,7 +141,11 @@ public class DrumCrossbowItem extends Item {
             float angleOffset = (projectileCount > 1) ? ((i == 1) ? -10f : (i == 2) ? 10f : 0f) : 0f;
 
             if (isAiming(player)) {
-                arrow.shootFromRotation(player, player.getXRot(), player.getYRot() + angleOffset, 0f, ARROW_SPEED, AIM_INACCURACY);
+                Vec3 look = player.getViewVector(1.0F);
+                if (angleOffset != 0f) {
+                    look = look.yRot((float) Math.toRadians(-angleOffset));
+                }
+                arrow.shoot(look.x, look.y, look.z, ARROW_SPEED, AIM_INACCURACY);
             } else {
                 shootFromHip(player, arrow, angleOffset);
             }
@@ -246,23 +250,29 @@ public class DrumCrossbowItem extends Item {
         RELOAD_FINISH.remove(uuid);
     }
 
-    private static void shootFromHip(Player player, Arrow arrow, float angleOffset) {
-        Vec3 eye = player.getEyePosition();
-        Vec3 look = player.getLookAngle();
+private static void shootFromHip(Player player, Arrow arrow, float angleOffset) {
+    Vec3 eye = player.getEyePosition();
+    Vec3 look = player.getLookAngle();
 
-        double yaw = Math.toRadians(player.getYRot() + angleOffset);
-        Vec3 right = new Vec3(-Math.cos(yaw), 0, -Math.sin(yaw));
-        Vec3 up = right.cross(look);
-        double side = player.getMainArm() == HumanoidArm.LEFT ? -1 : 1;
+    double yaw = Math.toRadians(player.getYRot() + angleOffset);
+    Vec3 right = new Vec3(-Math.cos(yaw), 0, -Math.sin(yaw));
+    Vec3 up = right.cross(look);
+    double side = player.getMainArm() == HumanoidArm.LEFT ? -1 : 1;
 
-        Vec3 spawn = eye
-            .add(right.scale(HIP_SIDE * side))
-            .add(up.scale(-HIP_DOWN))
-            .add(look.scale(HIP_FORWARD));
+    Vec3 spawn = eye
+        .add(right.scale(HIP_SIDE * side))
+        .add(up.scale(-HIP_DOWN))
+        .add(look.scale(HIP_FORWARD));
 
-        arrow.setPos(spawn.x, spawn.y, spawn.z);
-        arrow.shootFromRotation(player, player.getXRot(), player.getYRot() + angleOffset, 0f, ARROW_SPEED, HIP_INACCURACY);
-    }
+    // Точка на расстоянии CONVERGE_DISTANCE, куда смотрит прицел
+    Vec3 target = eye.add(look.scale(CONVERGE_DISTANCE));
+    // Вектор направления от дула арбалета к точке прицеливания
+    Vec3 shootDir = target.subtract(spawn).normalize();
+
+    arrow.setPos(spawn.x, spawn.y, spawn.z);
+    // Используем shoot() вместо shootFromRotation(), чтобы не передавать инерцию игрока
+    arrow.shoot(shootDir.x, shootDir.y, shootDir.z, ARROW_SPEED, HIP_INACCURACY);
+}
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
