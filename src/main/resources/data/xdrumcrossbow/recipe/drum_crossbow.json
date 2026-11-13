@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "GNG",
+    "ERE",
+    "TXT"
+  ],
+  "key": {
+    "G": "minecraft:gold_nugget",
+    "N": "minecraft:iron_nugget",
+    "E": "minecraft:iron_ingot",
+    "R": "minecraft:crossbow",
+    "T": "minecraft:string",
+    "X": "#minecraft:planks"
+  },
+  "result": {
+    "id": "xdrumcrossbow:drum_crossbow",
+    "count": 1
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "item.xdrumcrossbow.drum_crossbow": "Drum Crossbow",
+  "tooltip.xdrumcrossbow.ammo": "Ammo: %s",
+  "tooltip.xdrumcrossbow.ammo_type": "Ammo Type: Arrows",
+  "tooltip.xdrumcrossbow.range": "Range: 21 blocks",
+  "key.xdrumcrossbow.reload": "Reload Drum Crossbow"
+}

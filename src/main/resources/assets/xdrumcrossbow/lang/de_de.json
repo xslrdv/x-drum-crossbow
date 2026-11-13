@@ -1,0 +1,7 @@
+{
+  "item.xdrumcrossbow.drum_crossbow": "Trommelarmbrust",
+  "tooltip.xdrumcrossbow.ammo": "Munition: %s",
+  "tooltip.xdrumcrossbow.ammo_type": "Geschosstyp: Pfeile",
+  "tooltip.xdrumcrossbow.range": "Reichweite: 21 Blöcke",
+  "key.xdrumcrossbow.reload": "Trommelarmbrust nachladen"
+}

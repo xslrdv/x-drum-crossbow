@@ -1,0 +1,7 @@
+{
+  "item.xdrumcrossbow.drum_crossbow": "Барабанний арбалет",
+  "tooltip.xdrumcrossbow.ammo": "Боєзапас: %s",
+  "tooltip.xdrumcrossbow.ammo_type": "Тип снаряда: Стріли",
+  "tooltip.xdrumcrossbow.range": "Дальність: 21 блок",
+  "key.xdrumcrossbow.reload": "Перезарядити барабанний арбалет"
+}

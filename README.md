@@ -1,0 +1,57 @@
+# 🏹 X Drum Crossbow
+
+A vanilla-friendly **Minecraft** mod for **NeoForge** that adds a logical and balanced full crafting cycle for a **Feather Blank**. Shred *Sugar Cane* with *Shears* into **Cane Fibers**, extract a **Tar Clump** by smelting *Coal*, assemble a **Feather Blank**, and smelt it into a vanilla *Feather* - all without *harming* a single *animal*.
+
+---
+
+## ✨ Features
+
+- **Drum Crossbow Upgrade**
+  * Upgrade a vanilla *Crossbow* using *Iron Ingots*, *Iron Nuggets*, *Gold Nuggets*, *String*, and any *Planks* to craft the **Drum Crossbow**.
+- **Rotary Arrow Drum & Auto-Reload**
+  * Features an integrated arrow drum magazine that automatically loads arrows from your inventory and fires instantly with zero draw delay.
+- **Custom Ammo HUD**
+  * Includes a built-in on-screen indicator showing both the remaining arrows loaded in the drum and the total arrows available in your inventory.
+- **Full Enchantment & Repair Support**
+  * Supports all standard vanilla crossbow enchantments (such as *Quick Charge*, *Multishot*, *Piercing*, and *Unbreaking*).
+  * Can be repaired using *Iron Ingots*, *Gold Nuggets*, *String*, or any *Planks*.
+
+---
+
+## 💡 Why X Drum Crossbow?
+
+- **Vanilla-Friendly & Balanced**: Designed as a direct mid-game upgrade to the vanilla crossbow with fair crafting and repair costs.
+- **Tactical Combat Flow**: Eliminates the slow single-shot draw cycle in favor of a drum magazine and dedicated reload mechanic.
+- **Clear Visual Feedback**: Always know your exact ammo status in the heat of battle thanks to the lightweight HUD display.
+- **Seamless Integration**: Works out of the box with vanilla arrows, planks, and standard enchanting mechanics.
+
+---
+
+## 🛠️ Installation & Requirements
+
+### Requirements
+1. **Minecraft**: `26.3`
+2. Mod Loader: **NeoForge** `26.3.0.95+`
+
+### Installation
+1. Download and install **NeoForge** (version `26.3.0.95` or higher) for **Minecraft** `26.3`.
+2. Download the latest release of **X Drum Crossbow**.
+3. Place the `.jar` file into your `.minecraft/mods` folder.
+4. Launch the game and enjoy!
+
+---
+
+## 🌐 Supported Languages
+
+* English (`en_us`)
+* German (`de_de`)
+* Polish (`pl_pl`)
+* Russian (`ru_ru`)
+* Ukrainian (`uk_ua`)
+
+---
+
+## 📄 License
+
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.  
+See the [LICENSE](LICENSE) file for details.

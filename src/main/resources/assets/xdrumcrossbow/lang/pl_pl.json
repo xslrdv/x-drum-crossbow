@@ -1,0 +1,7 @@
+{
+  "item.xdrumcrossbow.drum_crossbow": "Kusza bębnowa",
+  "tooltip.xdrumcrossbow.ammo": "Amunicja: %s",
+  "tooltip.xdrumcrossbow.ammo_type": "Typ pocisku: Strzały",
+  "tooltip.xdrumcrossbow.range": "Zasięg: 21 bloków",
+  "key.xdrumcrossbow.reload": "Przeładuj kuszę bębnową"
+}
