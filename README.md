@@ -32,8 +32,8 @@ A vanilla-friendly **Minecraft** mod for **NeoForge** that lets you upgrade a st
 
 Since a **Вrum Сrossbow** goes through arrows quickly, pair this mod with my other vanilla-friendly mods for a smoother, more logical arrow-crafting progression:
 
-- **🪶 [X Craftable Feather](https://www.curseforge.com/minecraft/mc-mods/x-craftable-feather)** — Craft vanilla *Feathers* a balanced, multi-step cycle without needing to farm chickens.
-- **🪨 [X Craft Gunpowder](https://www.curseforge.com/minecraft/mc-mods/x-craft-gunpowder)** — Makes obtaining *Gravel* (and *Flint*) much more logical and comfortable in survival gameplay.
+- **🪶 [X Craftable Feather](https://github.com/xslrdv/x-craftable-feather)** — Craft vanilla *Feathers* a balanced, multi-step cycle without needing to farm chickens.
+- **🪨 [X Craft Gunpowder](https://github.com/xslrdv/x-craft-gunpowder)** — Makes obtaining *Gravel* (and *Flint*) much more logical and comfortable in survival gameplay.
 
 ---
 
