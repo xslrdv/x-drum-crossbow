@@ -21,7 +21,7 @@ A vanilla-friendly **Minecraft** mod for **NeoForge** that lets you upgrade a st
 ## 💡 Why X Drum Crossbow?
 
 - **Fast-Paced Action**: Tired of slow, single-shot archery and looking for more balanced, dynamic combat? This mod is made for you.
-- **No Overpowered Guns**: Don't want unbalanced, out-of-place, or illogical modern gun mods? This mod fits right into Minecraft's world.
+- **No Overpowered Guns**: Don't want unbalanced, out-of-place, or illogical modern gun mods? This mod fits right into Minecraft world.
 - **Vanilla-Friendly Progression**: Designed as a logical mid-game upgrade to the vanilla crossbow with fair crafting and repair costs.
 - **Tactical Combat Flow**: Replaces tedious one-by-one reloading with a multi-shot drum magazine and a dedicated reload mechanic.
 - **Clear Visual Feedback**: Always know your exact ammo status in the heat of battle thanks to the lightweight HUD display.
@@ -32,8 +32,8 @@ A vanilla-friendly **Minecraft** mod for **NeoForge** that lets you upgrade a st
 
 Since a **Вrum Сrossbow** goes through arrows quickly, pair this mod with my other vanilla-friendly mods for a smoother, more logical arrow-crafting progression:
 
-- **🪶 [X Craftable Feather](https://github.com/xslrdv/x-craftable-feather)** — Craft vanilla *Feathers* a balanced, multi-step cycle without needing to farm chickens.
-- **🪨 [X Craft Gunpowder](https://github.com/xslrdv/x-craft-gunpowder)** — Makes obtaining *Gravel* (and *Flint*) much more logical and comfortable in survival gameplay.
+- **🪶 [X Craftable Feather](https://github.com/xslrdv/x-craftable-feather)** - Craft vanilla *Feathers* a balanced, multi-step cycle without needing to farm chickens.
+- **🪨 [X Craft Gunpowder](https://github.com/xslrdv/x-craft-gunpowder)** - Makes obtaining *Gravel* (and *Flint*) much more logical and comfortable in survival gameplay.
 
 ---
 
