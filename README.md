@@ -14,7 +14,7 @@ A vanilla-friendly **Minecraft** mod for **NeoForge** that lets you upgrade a st
   * Includes a built-in on-screen indicator showing both the remaining arrows loaded in the drum and the total arrows available in your inventory.
 - **Full Enchantment & Repair Support**
   * Supports all standard vanilla crossbow enchantments (such as *Quick Charge*, *Multishot*, *Piercing*, and *Unbreaking*).
-  * Can be repaired using *Iron Ingots*, *Gold Nuggets*, *String*, or any *Planks*.
+  * Can be repaired by combining it with *Iron Ingot*, *Gold Nugget*, *String*, and any *Planks*.
 
 ---
 
