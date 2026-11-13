@@ -20,11 +20,12 @@ A vanilla-friendly **Minecraft** mod for **NeoForge** that adds a logical and ba
 
 ## 💡 Why X Drum Crossbow?
 
-- **Vanilla-Friendly & Balanced**: Designed as a direct mid-game upgrade to the vanilla crossbow with fair crafting and repair costs.
-- **Tactical Combat Flow**: Eliminates the slow single-shot draw cycle in favor of a drum magazine and dedicated reload mechanic.
+- **Fast-Paced Action**: Tired of slow, single-shot archery and looking for more balanced, dynamic combat? This mod is made for you.
+- **No Overpowered Guns**: Don't want unbalanced, out-of-place, or illogical modern gun mods? This mod fits right into Minecraft's world.
+- **Vanilla-Friendly Progression**: Designed as a logical mid-game upgrade to the vanilla crossbow with fair crafting and repair costs.
+- **Tactical Combat Flow**: Replaces tedious one-by-one reloading with a multi-shot drum magazine and a dedicated reload mechanic.
 - **Clear Visual Feedback**: Always know your exact ammo status in the heat of battle thanks to the lightweight HUD display.
 - **Seamless Integration**: Works out of the box with vanilla arrows, planks, and standard enchanting mechanics.
-
 ---
 
 ## 🛠️ Installation & Requirements
