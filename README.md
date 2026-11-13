@@ -1,6 +1,6 @@
 # 🏹 X Drum Crossbow
 
-A vanilla-friendly **Minecraft** mod for **NeoForge** that adds a logical and balanced full crafting cycle for a **Feather Blank**. Shred *Sugar Cane* with *Shears* into **Cane Fibers**, extract a **Tar Clump** by smelting *Coal*, assemble a **Feather Blank**, and smelt it into a vanilla *Feather* - all without *harming* a single *animal*.
+A vanilla-friendly **Minecraft** mod for **NeoForge** that lets you upgrade a standard *Crossbow* into a balanced **Drum Crossbow**. Equipped with a rotary arrow drum for automatic reloading, instant firing without draw delay, and a clean HUD ammo counter, it brings rapid-fire ranged combat seamlessly into survival gameplay.
 
 ---
 
