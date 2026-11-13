@@ -28,6 +28,15 @@ A vanilla-friendly **Minecraft** mod for **NeoForge** that lets you upgrade a st
 - **Seamless Integration**: Works out of the box with vanilla arrows, planks, and standard enchanting mechanics.
 ---
 
+## 🧩 Recommended Companion Mods
+
+Since a **Вrum Сrossbow** goes through arrows quickly, pair this mod with my other vanilla-friendly mods for a smoother, more logical arrow-crafting progression:
+
+- **🪶 [X Craftable Feather](https://www.curseforge.com/minecraft/mc-mods/x-craftable-feather)** — Craft vanilla *Feathers* a balanced, multi-step cycle without needing to farm chickens.
+- **🪨 [X Craft Gunpowder](https://www.curseforge.com/minecraft/mc-mods/x-craft-gunpowder)** — Makes obtaining *Gravel* (and *Flint*) much more logical and comfortable in survival gameplay.
+
+---
+
 ## 🛠️ Installation & Requirements
 
 ### Requirements
