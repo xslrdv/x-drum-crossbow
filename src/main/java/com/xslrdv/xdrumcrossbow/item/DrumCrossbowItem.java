@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.xslrdv.xdrumcrossbow.entity.DrumArrowEntity;
 import com.xslrdv.xdrumcrossbow.registry.ModComponents;
+import com.xslrdv.xdrumcrossbow.registry.ModEntities;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
@@ -19,6 +21,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.item.Item;
@@ -28,7 +31,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.UseEffects;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.function.Consumer;
@@ -44,8 +51,7 @@ public class DrumCrossbowItem extends Item {
     public static final int RELOAD_TICKS = 30;
 
     public static final float ARROW_SPEED = 3.75f;
-    public static final float AIM_INACCURACY = 0.15f;
-    public static final float HIP_INACCURACY = 1.25f;
+    public static final float HIP_INACCURACY = 0.5f;
     public static final float AIM_SPEED_MULTIPLIER = 0.7f;
 
     public static final double HIP_SIDE = 0.35;
@@ -136,19 +142,26 @@ public class DrumCrossbowItem extends Item {
             projectileCount = EnchantmentHelper.processProjectileCount(serverLevel, stack, player, 1);
         }
 
+        Vec3 aimTarget = getAimCollisionPoint(player, 128.0); // Точка коллизии взгляда
+
         for (int i = 0; i < projectileCount; i++) {
-            Arrow arrow = new Arrow(level, player, new ItemStack(Items.ARROW), stack);
+            // Our custom arrow
+            DrumArrowEntity arrow = new DrumArrowEntity(ModEntities.DRUM_ARROW.get(), level, player, new ItemStack(Items.ARROW), stack);
             float angleOffset = (projectileCount > 1) ? ((i == 1) ? -10f : (i == 2) ? 10f : 0f) : 0f;
 
             if (isAiming(player)) {
-                Vec3 look = player.getViewVector(1.0F);
+                Vec3 spawn = player.getEyePosition(1.0F);
+                arrow.setPos(spawn.x, spawn.y, spawn.z);
+
+                Vec3 shootDir = aimTarget.subtract(spawn).normalize();
                 if (angleOffset != 0f) {
-                    look = look.yRot((float) Math.toRadians(-angleOffset));
+                    shootDir = shootDir.yRot((float) Math.toRadians(-angleOffset));
                 }
-                arrow.shoot(look.x, look.y, look.z, ARROW_SPEED, AIM_INACCURACY);
+                arrow.shoot(shootDir.x, shootDir.y, shootDir.z, ARROW_SPEED, 0f);
             } else {
-                shootFromHip(player, arrow, angleOffset);
+                shootFromHip(player, arrow, aimTarget, angleOffset);
             }
+
             if (i > 0 || player.getAbilities().instabuild) {
                 arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
             }
@@ -250,9 +263,9 @@ public class DrumCrossbowItem extends Item {
         RELOAD_FINISH.remove(uuid);
     }
 
-private static void shootFromHip(Player player, Arrow arrow, float angleOffset) {
-    Vec3 eye = player.getEyePosition();
-    Vec3 look = player.getLookAngle();
+private static void shootFromHip(Player player, DrumArrowEntity arrow, Vec3 aimTarget, float angleOffset) {
+    Vec3 eye = player.getEyePosition(1.0F);
+    Vec3 look = player.getViewVector(1.0F);
 
     double yaw = Math.toRadians(player.getYRot() + angleOffset);
     Vec3 right = new Vec3(-Math.cos(yaw), 0, -Math.sin(yaw));
@@ -264,13 +277,12 @@ private static void shootFromHip(Player player, Arrow arrow, float angleOffset) 
         .add(up.scale(-HIP_DOWN))
         .add(look.scale(HIP_FORWARD));
 
-    // Точка на расстоянии CONVERGE_DISTANCE, куда смотрит прицел
-    Vec3 target = eye.add(look.scale(CONVERGE_DISTANCE));
-    // Вектор направления от дула арбалета к точке прицеливания
-    Vec3 shootDir = target.subtract(spawn).normalize();
+    Vec3 shootDir = aimTarget.subtract(spawn).normalize();
+    if (angleOffset != 0f) {
+        shootDir = shootDir.yRot((float) Math.toRadians(-angleOffset));
+    }
 
     arrow.setPos(spawn.x, spawn.y, spawn.z);
-    // Используем shoot() вместо shootFromRotation(), чтобы не передавать инерцию игрока
     arrow.shoot(shootDir.x, shootDir.y, shootDir.z, ARROW_SPEED, HIP_INACCURACY);
 }
 
@@ -284,5 +296,31 @@ private static void shootFromHip(Player player, Arrow arrow, float angleOffset) 
             .withStyle(ChatFormatting.WHITE));
         tooltipAdder.accept(Component.translatable("tooltip.xdrumcrossbow.range")
             .withStyle(ChatFormatting.WHITE));
+    }
+
+
+    private static Vec3 getAimCollisionPoint(Player player, double maxRange) {
+        Vec3 eye = player.getEyePosition(1.0F);
+        Vec3 look = player.getViewVector(1.0F);
+        Vec3 end = eye.add(look.scale(maxRange));
+
+        // Check for collision with blocks
+        HitResult blockHit = player.level().clip(new ClipContext(
+            eye, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player
+        ));
+        Vec3 targetPos = blockHit.getLocation();
+        double closestDistSqr = eye.distanceToSqr(targetPos);
+
+        // Check for collision with entities - Important
+        AABB searchBox = player.getBoundingBox().expandTowards(look.scale(maxRange)).inflate(1.0);
+        EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(
+            player.level(), player, eye, targetPos, searchBox,
+            entity -> !entity.isSpectator() && entity.isPickable(), 0.3f
+        );
+        if (entityHit != null && eye.distanceToSqr(entityHit.getLocation()) < closestDistSqr) {
+            targetPos = entityHit.getLocation();
+        }
+
+        return targetPos;
     }
 }

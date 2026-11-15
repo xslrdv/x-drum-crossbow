@@ -21,6 +21,7 @@ import com.xslrdv.xdrumcrossbow.network.ReloadPayload;
 import com.xslrdv.xdrumcrossbow.network.ShootPayload;
 import com.xslrdv.xdrumcrossbow.registry.ModComponents;
 import com.xslrdv.xdrumcrossbow.registry.ModCreativeTabs;
+import com.xslrdv.xdrumcrossbow.registry.ModEntities;
 import com.xslrdv.xdrumcrossbow.registry.ModItems;
 import com.xslrdv.xdrumcrossbow.registry.ModRecipes;
 
@@ -36,6 +37,7 @@ public class XDrumCrossbow {
         ModComponents.register(modEventBus);
         ModItems.register(modEventBus);
         ModRecipes.register(modEventBus);
+        ModEntities.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         modEventBus.addListener(XDrumCrossbow::registerPayloads);
     }

@@ -5,6 +5,7 @@ import com.xslrdv.xdrumcrossbow.XDrumCrossbow;
 import com.xslrdv.xdrumcrossbow.item.DrumCrossbowItem;
 import com.xslrdv.xdrumcrossbow.network.ReloadPayload;
 import com.xslrdv.xdrumcrossbow.network.ShootPayload;
+import com.xslrdv.xdrumcrossbow.registry.ModEntities;
 import com.xslrdv.xdrumcrossbow.registry.ModItems;
 
 import net.minecraft.client.DeltaTracker;
@@ -12,6 +13,8 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.entity.ArrowRenderer;
+import net.minecraft.client.renderer.entity.TippableArrowRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,6 +26,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
@@ -144,5 +148,10 @@ public class ClientEvents {
         g.pose().scale(smallScale, smallScale);
         g.text(font, all, 0, 0, 0xFFAAAAAA, true);
         g.pose().popMatrix();
+    }
+
+    @SubscribeEvent
+    public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ModEntities.DRUM_ARROW.get(), TippableArrowRenderer::new);
     }
 }
