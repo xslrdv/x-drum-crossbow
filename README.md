@@ -9,12 +9,13 @@ A vanilla-friendly **Minecraft** mod for **NeoForge** that lets you upgrade a st
 - **Drum Crossbow Upgrade**
   * Upgrade a vanilla *Crossbow* using *Iron Ingots*, *Iron Nuggets*, *Gold Nuggets*, *String*, and any *Planks* to craft the **Drum Crossbow**.
 - **Rotary Arrow Drum & Auto-Reload**
-  * Features an integrated arrow drum magazine that automatically loads arrows from your inventory and fires instantly with zero draw delay.
+  * Features an integrated arrow drum magazine that fires instantly with zero draw delay.
+  * Supports **automatic reloading** when *drum* is empty, as well as **manual reloading** at any time via the **`R`** key (rebindable in Minecraft's Controls menu).
 - **Custom Ammo HUD**
   * Includes a built-in on-screen indicator showing both the remaining arrows loaded in the drum and the total arrows available in your inventory.
 - **Full Enchantment & Repair Support**
-  * Supports all standard vanilla crossbow enchantments (such as *Quick Charge*, *Multishot*, *Piercing*, and *Unbreaking*).
-  * Can be repaired by combining it with *Iron Ingot*, *Gold Nugget*, *String*, and any *Planks*.
+  * Supports all standard vanilla crossbow enchantments (such as *Quick Charge*, *Multishot*, *Piercing*, *Unbreaking*, and *Curse of Vanishing*).
+  * Can be fully **repaired** at an anvil using 1–2 *Iron Ingots* (depending on remaining durability) at **zero XP cost**.
 
 ---
 

@@ -2,6 +2,8 @@
   "item.xdrumcrossbow.drum_crossbow": "Барабанный арбалет",
   "tooltip.xdrumcrossbow.ammo": "Боезапас: %s",
   "tooltip.xdrumcrossbow.ammo_type": "Тип снаряда: Стрелы",
-  "tooltip.xdrumcrossbow.range": "Дальность: 21 блок",
-  "key.xdrumcrossbow.reload": "Перезарядить барабанный арбалет"
+  "tooltip.xdrumcrossbow.range": "Дальность: 25 блок",
+  "key.xdrumcrossbow.reload": "Перезарядить барабанный арбалет",
+  "death.attack.drum_crossbow_bolt": "%1$s был пронзён болтом",
+  "death.attack.drum_crossbow_bolt.player": "%1$s был расстрелян из барабанного арбалета игроком %2$s"
 }

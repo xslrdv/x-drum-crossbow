@@ -10,6 +10,7 @@ import com.xslrdv.xdrumcrossbow.registry.ModComponents;
 import com.xslrdv.xdrumcrossbow.registry.ModEntities;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -30,6 +31,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.UseEffects;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -58,8 +60,12 @@ public class DrumCrossbowItem extends Item {
     public static final double HIP_FORWARD = 0.5;
     public static final double CONVERGE_DISTANCE = 20.0;
 
+    public static final double AIM_DOWN = 0.16;
+    public static final double AIM_FORWARD = 0.45;
+
     private static final Map<UUID, Long> LAST_SHOT = new HashMap<>();
     private static final Map<UUID, Long> RELOAD_FINISH = new HashMap<>();
+    private static final Map<UUID, Integer> CURRENT_RELOAD_DURATION = new HashMap<>();
 
     public DrumCrossbowItem(Properties props) {
         super(props
@@ -127,6 +133,12 @@ public class DrumCrossbowItem extends Item {
 
         int ammo = getAmmo(stack);
         if (ammo <= 0) {
+            // If drum empty, and if has arrom - start reload
+            if (player.getAbilities().instabuild || hasArrows(player)) {
+                startReload(player);
+                return;
+            }
+
             if (last == null || now - last >= EMPTY_CLICK_DELAY) {
                 LAST_SHOT.put(player.getUUID(), now);
                 level.playSound(null, player.blockPosition(), SoundEvents.DISPENSER_FAIL,
@@ -141,7 +153,7 @@ public class DrumCrossbowItem extends Item {
             projectileCount = EnchantmentHelper.processProjectileCount(serverLevel, stack, player, 1);
         }
 
-        Vec3 aimTarget = getAimCollisionPoint(player, 128.0); // Точка коллизии взгляда
+        Vec3 aimTarget = getAimCollisionPoint(player, 128.0); // Point collision camera aim/crosshair
 
         for (int i = 0; i < projectileCount; i++) {
             // Our custom arrow
@@ -149,14 +161,7 @@ public class DrumCrossbowItem extends Item {
             float angleOffset = (projectileCount > 1) ? ((i == 1) ? -10f : (i == 2) ? 10f : 0f) : 0f;
 
             if (isAiming(player)) {
-                Vec3 spawn = player.getEyePosition(1.0F);
-                arrow.setPos(spawn.x, spawn.y, spawn.z);
-
-                Vec3 shootDir = aimTarget.subtract(spawn).normalize();
-                if (angleOffset != 0f) {
-                    shootDir = shootDir.yRot((float) Math.toRadians(-angleOffset));
-                }
-                arrow.shoot(shootDir.x, shootDir.y, shootDir.z, ARROW_SPEED, 0f);
+                shootAimed(player, arrow, aimTarget, angleOffset);
             } else {
                 shootFromHip(player, arrow, aimTarget, angleOffset);
             }
@@ -170,8 +175,14 @@ public class DrumCrossbowItem extends Item {
         level.playSound(null, player.blockPosition(), SoundEvents.CROSSBOW_SHOOT,
             SoundSource.PLAYERS, 1f, 1f);
 
-        setAmmo(stack, ammo - 1);
+        int newAmmo = ammo - 1;
+        setAmmo(stack, newAmmo);
         stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+
+        // Automatic reload after last shoot and 0 ammo in drum
+        /*if (newAmmo <= 0 && (player.getAbilities().instabuild || hasArrows(player))) {
+            startReload(player);
+        }*/
     }
 
     public static boolean hasArrows(Player player) {
@@ -180,6 +191,23 @@ public class DrumCrossbowItem extends Item {
             if (inv.getItem(i).is(Items.ARROW)) return true;
         }
         return false;
+    }
+
+
+
+    public static int getReloadTicks(Level level, LivingEntity entity, ItemStack stack) {
+        float baseSeconds = RELOAD_TICKS / 20.0f;
+        float modifiedSeconds = EnchantmentHelper.modifyCrossbowChargingTime(stack, entity, baseSeconds);
+        int ticks = Math.round(modifiedSeconds * 20.0f);
+
+        if (ticks >= RELOAD_TICKS) {
+            var enchantmentLookup = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+            var quickChargeHolder = enchantmentLookup.getOrThrow(Enchantments.QUICK_CHARGE);
+            int qcLevel = stack.getEnchantmentLevel(quickChargeHolder);
+            ticks = RELOAD_TICKS - (qcLevel * 5);
+        }
+
+        return Math.max(5, ticks);
     }
 
     public static void startReload(Player player) {
@@ -196,15 +224,12 @@ public class DrumCrossbowItem extends Item {
             return;
         }
 
-        int reloadTicks = RELOAD_TICKS;
-        if (player.level() instanceof ServerLevel) {
-            reloadTicks = Math.round(EnchantmentHelper.modifyCrossbowChargingTime(stack, player, RELOAD_TICKS));
-            reloadTicks = Math.max(5, reloadTicks);
-        }
+        int reloadTicks = getReloadTicks(player.level(), player, stack);
 
         player.stopUsingItem();
         player.getCooldowns().addCooldown(stack, reloadTicks);
         RELOAD_FINISH.put(player.getUUID(), player.level().getGameTime() + reloadTicks);
+        CURRENT_RELOAD_DURATION.put(player.getUUID(), reloadTicks);
 
         player.level().playSound(null, player.blockPosition(),
             SoundEvents.CROSSBOW_LOADING_START.value(), SoundSource.PLAYERS, 1f, 1f);
@@ -215,14 +240,16 @@ public class DrumCrossbowItem extends Item {
         if (finish == null) return;
 
         long now = player.level().getGameTime();
+        int duration = CURRENT_RELOAD_DURATION.getOrDefault(player.getUUID(), RELOAD_TICKS);
 
-        if (now == finish - (RELOAD_TICKS / 2)) {
+        if (now == finish - (duration / 2)) {
             player.level().playSound(null, player.blockPosition(),
                 SoundEvents.CROSSBOW_LOADING_MIDDLE.value(), SoundSource.PLAYERS, 1f, 1f);
         }
 
         if (now >= finish) {
             RELOAD_FINISH.remove(player.getUUID());
+            CURRENT_RELOAD_DURATION.remove(player.getUUID());
             finishReload(player);
         }
     }
@@ -260,30 +287,31 @@ public class DrumCrossbowItem extends Item {
     public static void onPlayerLogout(UUID uuid) {
         LAST_SHOT.remove(uuid);
         RELOAD_FINISH.remove(uuid);
+        CURRENT_RELOAD_DURATION.remove(uuid);
     }
 
-private static void shootFromHip(Player player, DrumArrowEntity arrow, Vec3 aimTarget, float angleOffset) {
-    Vec3 eye = player.getEyePosition(1.0F);
-    Vec3 look = player.getViewVector(1.0F);
+    private static void shootFromHip(Player player, DrumArrowEntity arrow, Vec3 aimTarget, float angleOffset) {
+        Vec3 eye = player.getEyePosition(1.0F);
+        Vec3 look = player.getViewVector(1.0F);
 
-    double yaw = Math.toRadians(player.getYRot() + angleOffset);
-    Vec3 right = new Vec3(-Math.cos(yaw), 0, -Math.sin(yaw));
-    Vec3 up = right.cross(look);
-    double side = player.getMainArm() == HumanoidArm.LEFT ? -1 : 1;
+        double yaw = Math.toRadians(player.getYRot() + angleOffset);
+        Vec3 right = new Vec3(-Math.cos(yaw), 0, -Math.sin(yaw));
+        Vec3 up = right.cross(look);
+        double side = player.getMainArm() == HumanoidArm.LEFT ? -1 : 1;
 
-    Vec3 spawn = eye
-        .add(right.scale(HIP_SIDE * side))
-        .add(up.scale(-HIP_DOWN))
-        .add(look.scale(HIP_FORWARD));
+        Vec3 spawn = eye
+            .add(right.scale(HIP_SIDE * side))
+            .add(up.scale(-HIP_DOWN))
+            .add(look.scale(HIP_FORWARD));
 
-    Vec3 shootDir = aimTarget.subtract(spawn).normalize();
-    if (angleOffset != 0f) {
-        shootDir = shootDir.yRot((float) Math.toRadians(-angleOffset));
+        Vec3 shootDir = aimTarget.subtract(spawn).normalize();
+        if (angleOffset != 0f) {
+            shootDir = shootDir.yRot((float) Math.toRadians(-angleOffset));
+        }
+
+        arrow.setPos(spawn.x, spawn.y, spawn.z);
+        arrow.shoot(shootDir.x, shootDir.y, shootDir.z, ARROW_SPEED, HIP_INACCURACY);
     }
-
-    arrow.setPos(spawn.x, spawn.y, spawn.z);
-    arrow.shoot(shootDir.x, shootDir.y, shootDir.z, ARROW_SPEED, HIP_INACCURACY);
-}
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
@@ -321,5 +349,32 @@ private static void shootFromHip(Player player, DrumArrowEntity arrow, Vec3 aimT
         }
 
         return targetPos;
+    }
+
+    private static void shootAimed(Player player, DrumArrowEntity arrow, Vec3 aimTarget, float angleOffset) {
+        Vec3 eye = player.getEyePosition(1.0F);
+        Vec3 look = player.getViewVector(1.0F);
+
+        double yaw = Math.toRadians(player.getYRot());
+        Vec3 right = new Vec3(-Math.cos(yaw), 0, -Math.sin(yaw));
+        Vec3 up = right.cross(look);
+
+        Vec3 spawn = eye
+            .add(up.scale(-AIM_DOWN))
+            .add(look.scale(AIM_FORWARD));
+
+        // Protection against point-blank shooting, so that the arrow doesn’t fly backward
+        Vec3 target = aimTarget;
+        if (eye.distanceToSqr(target) < 2.25) {
+            target = eye.add(look.scale(2.0));
+        }
+
+        Vec3 shootDir = target.subtract(spawn).normalize();
+        if (angleOffset != 0f) {
+            shootDir = shootDir.yRot((float) Math.toRadians(-angleOffset));
+        }
+
+        arrow.setPos(spawn.x, spawn.y, spawn.z);
+        arrow.shoot(shootDir.x, shootDir.y, shootDir.z, ARROW_SPEED, 0f);
     }
 }

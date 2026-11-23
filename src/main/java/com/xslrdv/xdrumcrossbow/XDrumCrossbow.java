@@ -23,7 +23,6 @@ import com.xslrdv.xdrumcrossbow.registry.ModComponents;
 import com.xslrdv.xdrumcrossbow.registry.ModCreativeTabs;
 import com.xslrdv.xdrumcrossbow.registry.ModEntities;
 import com.xslrdv.xdrumcrossbow.registry.ModItems;
-import com.xslrdv.xdrumcrossbow.registry.ModRecipes;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -36,7 +35,6 @@ public class XDrumCrossbow {
     public XDrumCrossbow(IEventBus modEventBus) {
         ModComponents.register(modEventBus);
         ModItems.register(modEventBus);
-        ModRecipes.register(modEventBus);
         ModEntities.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         modEventBus.addListener(XDrumCrossbow::registerPayloads);

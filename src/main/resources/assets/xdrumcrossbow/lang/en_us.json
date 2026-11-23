@@ -2,6 +2,8 @@
   "item.xdrumcrossbow.drum_crossbow": "Drum Crossbow",
   "tooltip.xdrumcrossbow.ammo": "Ammo: %s",
   "tooltip.xdrumcrossbow.ammo_type": "Ammo Type: Arrows",
-  "tooltip.xdrumcrossbow.range": "Range: 21 blocks",
-  "key.xdrumcrossbow.reload": "Reload Drum Crossbow"
+  "tooltip.xdrumcrossbow.range": "Range: 25 blocks",
+  "key.xdrumcrossbow.reload": "Reload Drum Crossbow",
+  "death.attack.drum_crossbow_bolt": "%1$s was pierced by a bolt",
+  "death.attack.drum_crossbow_bolt.player": "%1$s was shot down with a drum crossbow by %2$s"
 }

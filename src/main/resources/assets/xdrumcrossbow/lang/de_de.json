@@ -2,6 +2,8 @@
   "item.xdrumcrossbow.drum_crossbow": "Trommelarmbrust",
   "tooltip.xdrumcrossbow.ammo": "Munition: %s",
   "tooltip.xdrumcrossbow.ammo_type": "Geschosstyp: Pfeile",
-  "tooltip.xdrumcrossbow.range": "Reichweite: 21 Blöcke",
-  "key.xdrumcrossbow.reload": "Trommelarmbrust nachladen"
+  "tooltip.xdrumcrossbow.range": "Reichweite: 25 Blöcke",
+  "key.xdrumcrossbow.reload": "Trommelarmbrust nachladen",
+  "death.attack.drum_crossbow_bolt": "%1$s wurde von einem Bolzen durchbohrt",
+  "death.attack.drum_crossbow_bolt.player": "%1$s wurde von %2$s mit einer Trommelarmbrust niedergeschossen"
 }

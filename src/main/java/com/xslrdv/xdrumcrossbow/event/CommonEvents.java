@@ -4,12 +4,16 @@ import com.xslrdv.xdrumcrossbow.XDrumCrossbow;
 import com.xslrdv.xdrumcrossbow.item.DrumCrossbowItem;
 
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.AnvilUpdateEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.entity.player.AnvilCraftEvent;
 
 @EventBusSubscriber(modid = XDrumCrossbow.MODID)
 public class CommonEvents {
@@ -32,6 +36,38 @@ public class CommonEvents {
         Player player = e.getEntity();
         if (!player.level().isClientSide()) {
             DrumCrossbowItem.tickReload(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onAnvilUpdate(AnvilUpdateEvent event) {
+        ItemStack left = event.getLeft();
+        ItemStack right = event.getRight();
+
+        if (left.getItem() instanceof DrumCrossbowItem && left.isDamaged() && right.is(Items.IRON_INGOT)) {
+            int maxDamage = left.getMaxDamage();
+            int currentDamage = left.getDamageValue();
+            int remainingDurability = maxDamage - currentDamage;
+
+            int requiredIngots = (remainingDurability < maxDamage / 2) ? 2 : 1;
+
+            if (right.getCount() >= requiredIngots) {
+                ItemStack output = left.copy();
+                output.setDamageValue(0);
+
+                event.setOutput(output);
+                event.setMaterialCost(requiredIngots);
+                event.setXpCost(1);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onAnvilRepair(AnvilCraftEvent.Post event) {
+        if (!event.getEntity().getAbilities().instabuild
+            && event.getLeft().getItem() instanceof DrumCrossbowItem
+            && event.getRight().is(Items.IRON_INGOT)) {
+            event.getEntity().giveExperienceLevels(1);
         }
     }
 
